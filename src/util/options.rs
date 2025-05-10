@@ -9,8 +9,6 @@ use itertools::Itertools;
 
 use clap::{Arg, Command};
 use clap::error::ErrorKind;
-use rustc_tools_util::VersionInfo;
-
 
 use crate::pta::PTAType;
 

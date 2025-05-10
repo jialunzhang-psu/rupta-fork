@@ -412,4 +412,8 @@ impl<'pta, 'tcx, 'compilation, S: ContextStrategy> PointerAnalysis<'tcx, 'compil
         let pta_stat = ContextSensitiveStat::new(self);
         pta_stat.dump_stats();
     }
+    
+    fn get_result(&mut self) -> PointerAnalysisResult<'tcx> {
+        self.into()
+    }
 }

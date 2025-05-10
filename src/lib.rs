@@ -39,3 +39,5 @@ pub mod pta;
 pub mod rta;
 pub mod pts_set;
 pub mod util;
+
+pub use pta::result::CallGraph;

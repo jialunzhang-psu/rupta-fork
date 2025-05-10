@@ -20,10 +20,13 @@ use crate::pts_set::points_to::HybridPointsToSet;
 use crate::pts_set::pt_data::DiffPTData;
 use crate::util::mem_watcher::MemoryWatcher;
 use crate::util::options::AnalysisOptions;
+use crate::pta::result::PointerAnalysisResult;
 
 pub mod andersen;
 pub mod context_sensitive;
 pub mod propagator;
+
+pub mod result;
 pub mod strategies;
 
 pub type NodeId = PAGNodeId;
@@ -64,6 +67,8 @@ pub trait PointerAnalysis<'tcx, 'compilation> {
 
         self.finalize();
     }
+
+    fn get_result(&mut self) -> PointerAnalysisResult<'tcx>;
 }
 
 pub struct PTACallbacks {
@@ -82,11 +87,11 @@ impl PTACallbacks {
         }
     }
 
-    fn run_pointer_analysis(&mut self, compiler: &interface::Compiler, tcx: TyCtxt<'_>) {
+    pub fn run_pointer_analysis<'tcx>(&mut self, compiler: &interface::Compiler, tcx: TyCtxt<'tcx>) -> PointerAnalysisResult<'tcx> {
         let mut mem_watcher = MemoryWatcher::new();
         mem_watcher.start();
 
-        if let Some(mut acx) = AnalysisContext::new(&compiler.sess, tcx, self.options.clone()) {
+        let result = if let Some(mut acx) = AnalysisContext::new(&compiler.sess, tcx, self.options.clone()) {
             let mut pta: Box<dyn PointerAnalysis> = match self.options.pta_type {
                 PTAType::CallSiteSensitive => {
                     Box::new(
@@ -99,11 +104,13 @@ impl PTACallbacks {
                 PTAType::Andersen => Box::new(AndersenPTA::new(&mut acx)),
             };
             pta.analyze();
+            pta.get_result()
         } else {
-            error!("AnalysisContext Initialization Failed");
-        }
+            panic!("AnalysisContext Initialization Failed");
+        };
 
         mem_watcher.stop();
+        result
     }
 
 }

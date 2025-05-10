@@ -279,4 +279,7 @@ impl<'pta, 'tcx, 'compilation> PointerAnalysis<'tcx, 'compilation> for AndersenP
         pta_stat.dump_stats();
     }
 
+    fn get_result(&mut self) -> PointerAnalysisResult<'tcx> {
+        self.into()
+    }
 }
