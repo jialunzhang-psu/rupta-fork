@@ -182,6 +182,7 @@ pub enum KnownNames {
 }
 
 /// An analysis lifetime cache that contains a map from def ids to known names.
+#[derive(Clone)]
 pub struct KnownNamesCache {
     name_cache: HashMap<DefId, KnownNames>,
 }

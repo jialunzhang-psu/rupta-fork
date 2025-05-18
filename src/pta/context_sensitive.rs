@@ -343,7 +343,7 @@ impl<'pta, 'tcx, 'compilation, S: ContextStrategy> ContextSensitivePTA<'pta, 'tc
 
 }
 
-impl<'pta, 'tcx, 'compilation, S: ContextStrategy> PointerAnalysis<'tcx, 'compilation>
+impl<'pta, 'tcx, 'compilation, S: ContextStrategy> PointerAnalysis<'pta, 'tcx, 'compilation>
     for ContextSensitivePTA<'pta, 'tcx, 'compilation, S>
 {
     fn pre_analysis(&mut self) {
@@ -413,7 +413,7 @@ impl<'pta, 'tcx, 'compilation, S: ContextStrategy> PointerAnalysis<'tcx, 'compil
         pta_stat.dump_stats();
     }
     
-    fn get_result(&mut self) -> PointerAnalysisResult<'tcx> {
-        self.into()
+    fn get_result(&mut self) -> PointerAnalysisResult<'tcx, 'compilation> {
+        PointerAnalysisResult::new(self.acx, &self.call_graph)
     }
 }

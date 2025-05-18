@@ -40,7 +40,7 @@ pub enum PTAType {
     CallSiteSensitive
 }
 
-pub trait PointerAnalysis<'tcx, 'compilation> {
+pub trait PointerAnalysis<'pta, 'tcx, 'compilation> {
     fn pre_analysis(&mut self) {}
     // Initialization for the analysis.
     fn initialize(&mut self);
@@ -68,7 +68,7 @@ pub trait PointerAnalysis<'tcx, 'compilation> {
         self.finalize();
     }
 
-    fn get_result(&mut self) -> PointerAnalysisResult<'tcx>;
+    fn get_result(&mut self) -> PointerAnalysisResult<'tcx, 'compilation>;
 }
 
 pub struct PTACallbacks {
@@ -87,7 +87,7 @@ impl PTACallbacks {
         }
     }
 
-    pub fn run_pointer_analysis<'tcx>(&mut self, compiler: &interface::Compiler, tcx: TyCtxt<'tcx>) -> PointerAnalysisResult<'tcx> {
+    pub fn run_pointer_analysis<'pta, 'tcx, 'compilation>(&mut self, compiler: &'compilation interface::Compiler, tcx: TyCtxt<'tcx>) -> PointerAnalysisResult<'tcx, 'compilation> {
         let mut mem_watcher = MemoryWatcher::new();
         mem_watcher.start();
 

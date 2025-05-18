@@ -21,7 +21,7 @@ use std::{
 use crate::{
     graph::call_graph::{CGCallSite, CGFunction, CallGraph as PTACallGraph},
     mir::{
-        analysis_context::AnalysisContext,
+        analysis_context::{self, AnalysisContext},
         call_site::BaseCallSite,
         function::FuncId,
         path::{PathEnum, ProjectionElems},
@@ -33,9 +33,9 @@ use super::{
     strategies::context_strategy::ContextStrategy,
 };
 
-#[derive(Clone, Debug)]
-pub struct PointerAnalysisResult<'tcx> {
+pub struct PointerAnalysisResult<'tcx, 'compilation> {
     pub call_graph: CallGraph,
+    pub analysis_context: AnalysisContext<'tcx, 'compilation>,
     phantom_data: std::marker::PhantomData<&'tcx ()>,
 }
 
@@ -512,37 +512,36 @@ impl CallGraph {
     }
 }
 
-impl<'pta, 'tcx, 'compilation> From<&mut AndersenPTA<'pta, 'tcx, 'compilation>>
-    for PointerAnalysisResult<'tcx>
-{
-    fn from(pta: &mut AndersenPTA<'pta, 'tcx, 'compilation>) -> Self {
-        let acx = &mut pta.acx;
-        let call_graph = &pta.call_graph;
-        PointerAnalysisResult::new(acx, call_graph)
-    }
-}
+// impl<'pta, 'tcx, 'compilation> From<&mut AndersenPTA<'pta, 'tcx, 'compilation>>
+//     for PointerAnalysisResult<'tcx, 'compilation>
+// {
+//     fn from(pta: &mut AndersenPTA<'pta, 'tcx, 'compilation>) -> Self {
+//         let call_graph = &pta.call_graph;
+//         PointerAnalysisResult::new(pta.acx, call_graph)
+//     }
+// }
 
-impl<'pta, 'tcx, 'compilation, S: ContextStrategy> From<&mut ContextSensitivePTA<'pta, 'tcx, 'compilation, S>>
-    for PointerAnalysisResult<'tcx>
-{
-    fn from(pta: &mut ContextSensitivePTA<'pta, 'tcx, 'compilation, S>) -> Self {
-        let acx = &mut pta.acx;
-        let call_graph = &pta.call_graph;
-        PointerAnalysisResult::new(acx, call_graph)
-    }
-}
+// impl<'pta, 'tcx, 'compilation, S: ContextStrategy> From<&mut ContextSensitivePTA<'pta, 'tcx, 'compilation, S>>
+//     for PointerAnalysisResult<'tcx, 'compilation>
+// {
+//     fn from(pta: &'pta mut ContextSensitivePTA<'pta, 'tcx, 'compilation, S>) -> Self {
+//         let call_graph = &pta.call_graph;
+//         PointerAnalysisResult::new(pta.acx, call_graph)
+//     }
+// }
 
-impl<'tcx> PointerAnalysisResult<'tcx> {
+impl<'pta, 'tcx, 'compilation> PointerAnalysisResult<'tcx, 'compilation> {
     pub fn new<F, S>(
-        acx: &mut AnalysisContext<'tcx, '_>,
+        acx: &'pta mut AnalysisContext<'tcx, 'compilation>,
         call_graph: &PTACallGraph<F, S>,
-    ) -> PointerAnalysisResult<'tcx>
+    ) -> PointerAnalysisResult< 'tcx, 'compilation>
     where
         F: CGFunction + Into<FuncId>,
         S: CGCallSite + Into<BaseCallSite>,
     {
         PointerAnalysisResult {
             call_graph: extract_call_graph(acx, call_graph),
+            analysis_context: acx.clone(),
             phantom_data: std::marker::PhantomData,
         }
     }

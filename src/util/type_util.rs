@@ -23,7 +23,7 @@ use crate::mir::path::{Path, PathEnum, PathSelector, ProjectionElems};
 
 /// Provides a way to refer to a rustc_middle::ty::Ty via a handle that does not have
 /// a life time specifier.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TypeCache<'tcx> {
     type_list: Vec<Ty<'tcx>>,
     type_to_index_map: HashMap<Ty<'tcx>, usize>,
@@ -68,6 +68,7 @@ impl<'tcx> TypeCache<'tcx> {
 
 
 /// Provides a way to effectively get the pointer type fields of a given type.
+#[derive(Clone)]
 pub struct PointerProjectionsCache<'tcx> {
     pub(crate) ptr_projs_cache: HashMap<Ty<'tcx>, Vec<(ProjectionElems, Ty<'tcx>)>>,
 }
@@ -100,6 +101,7 @@ impl<'tcx> PointerProjectionsCache<'tcx> {
 
 
 /// Provides a way to effectively get the byte offsets of an ADT type's fields
+#[derive(Clone)]
 pub struct FieldByteOffsetCache<'tcx> {
     pub(crate) field_byte_offset_cache: HashMap<Ty<'tcx>, HashMap<ProjectionElems, usize>>,
 }
@@ -269,6 +271,7 @@ impl<'tcx> FieldByteOffsetCache<'tcx> {
 
 
 /// Manage the type cast for paths
+#[derive(Clone)]
 pub struct PathCastCache<'tcx> {
     pub(crate) path_cast_types: HashMap<Rc<Path>, HashSet<Ty<'tcx>>>,
 }

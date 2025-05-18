@@ -25,6 +25,7 @@ use crate::mir::call_site::{BaseCallSite, CalleeIdentifier};
 use crate::mir::path::{PathEnum, ProjectionElems};
 
 /// Global information of the analysis
+#[derive(Clone)]
 pub struct AnalysisContext<'tcx, 'compilation> {
     /// The central data structure of the compiler.
     pub tcx: TyCtxt<'tcx>,

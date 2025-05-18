@@ -213,7 +213,7 @@ impl<'pta, 'tcx, 'compilation> AndersenPTA<'pta, 'tcx, 'compilation> {
 
 }
 
-impl<'pta, 'tcx, 'compilation> PointerAnalysis<'tcx, 'compilation> for AndersenPTA<'pta, 'tcx, 'compilation> {
+impl<'pta, 'tcx, 'compilation> PointerAnalysis<'pta, 'tcx, 'compilation> for AndersenPTA<'pta, 'tcx, 'compilation> {
     fn pre_analysis(&mut self) {
         if !self.acx.analysis_options.stack_filtering {
             return;
@@ -279,7 +279,7 @@ impl<'pta, 'tcx, 'compilation> PointerAnalysis<'tcx, 'compilation> for AndersenP
         pta_stat.dump_stats();
     }
 
-    fn get_result(&mut self) -> PointerAnalysisResult<'tcx> {
-        self.into()
+    fn get_result(&mut self) -> PointerAnalysisResult<'tcx, 'compilation> {
+        PointerAnalysisResult::new(self.acx, &self.call_graph)
     }
 }

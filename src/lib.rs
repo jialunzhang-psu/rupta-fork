@@ -41,3 +41,4 @@ pub mod pts_set;
 pub mod util;
 
 pub use pta::result::CallGraph;
+pub use mir::analysis_context::AnalysisContext;
