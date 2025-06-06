@@ -130,3 +130,10 @@ impl<'tcx> ToString for FunctionReference<'tcx> {
         }
     }
 }
+
+impl FuncId {
+    pub fn to_string(&self, acx: &crate::AnalysisContext) -> String {
+        let def_id = acx.functions[*self].def_id;
+        acx.tcx.def_path_str(def_id)
+    }
+}

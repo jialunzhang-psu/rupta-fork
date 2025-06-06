@@ -40,5 +40,7 @@ pub mod rta;
 pub mod pts_set;
 pub mod util;
 
-pub use pta::result::CallGraph;
+pub use pta::result::{CallGraph, Path};
 pub use mir::analysis_context::AnalysisContext;
+pub use util::options::AnalysisOptions;
+pub use mir::function::FuncId;

@@ -69,7 +69,7 @@ pub struct AnalysisContext<'tcx, 'compilation> {
     pub concretized_heap_objs: HashMap<Rc<Path>, Ty<'tcx>>,
 
     /// Record the max index of the auxiliary local variable for each function instance.
-    pub(crate) aux_local_indexer: HashMap<FuncId, usize>,
+    pub aux_local_indexer: HashMap<FuncId, usize>,
 
     pub known_names_cache: KnownNamesCache,
 }

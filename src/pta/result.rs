@@ -21,16 +21,11 @@ use std::{
 use crate::{
     graph::call_graph::{CGCallSite, CGFunction, CallGraph as PTACallGraph},
     mir::{
-        analysis_context::{self, AnalysisContext},
+        analysis_context::AnalysisContext,
         call_site::BaseCallSite,
         function::FuncId,
         path::{PathEnum, ProjectionElems},
     },
-};
-
-use super::{
-    andersen::AndersenPTA, context_sensitive::ContextSensitivePTA,
-    strategies::context_strategy::ContextStrategy,
 };
 
 pub struct PointerAnalysisResult<'tcx, 'compilation> {
@@ -41,15 +36,6 @@ pub struct PointerAnalysisResult<'tcx, 'compilation> {
 
 /// A CallGraph is a graph that has functions as nodes and call sites as edges.
 pub type CallGraph = MyGraph<Func, Location>;
-
-// /// A DataflowGraph is a graph that has paths as nodes and dataflow facts as edges.
-// /// Note that the `Path` here is different from the `Path` in the `mir` module,
-// /// it is a persistent version, i.e., the function ID they use is `Func` in this module.
-// #[derive(Clone, Debug)]
-// pub(crate) struct DataflowGraph<'tcx> {
-//     pub(crate) graph: MyGraph<Rc<Path>, PAGEdgeEnum>,
-//     pub(crate) path_ty: HashMap<Rc<Path>, HashSet<Ty<'tcx>>>,
-// }
 
 type MyGraphNodeId = NodeIndex<DefaultIx>;
 #[derive(Clone, Debug)]
@@ -512,29 +498,11 @@ impl CallGraph {
     }
 }
 
-// impl<'pta, 'tcx, 'compilation> From<&mut AndersenPTA<'pta, 'tcx, 'compilation>>
-//     for PointerAnalysisResult<'tcx, 'compilation>
-// {
-//     fn from(pta: &mut AndersenPTA<'pta, 'tcx, 'compilation>) -> Self {
-//         let call_graph = &pta.call_graph;
-//         PointerAnalysisResult::new(pta.acx, call_graph)
-//     }
-// }
-
-// impl<'pta, 'tcx, 'compilation, S: ContextStrategy> From<&mut ContextSensitivePTA<'pta, 'tcx, 'compilation, S>>
-//     for PointerAnalysisResult<'tcx, 'compilation>
-// {
-//     fn from(pta: &'pta mut ContextSensitivePTA<'pta, 'tcx, 'compilation, S>) -> Self {
-//         let call_graph = &pta.call_graph;
-//         PointerAnalysisResult::new(pta.acx, call_graph)
-//     }
-// }
-
 impl<'pta, 'tcx, 'compilation> PointerAnalysisResult<'tcx, 'compilation> {
     pub fn new<F, S>(
         acx: &'pta mut AnalysisContext<'tcx, 'compilation>,
         call_graph: &PTACallGraph<F, S>,
-    ) -> PointerAnalysisResult< 'tcx, 'compilation>
+    ) -> PointerAnalysisResult<'tcx, 'compilation>
     where
         F: CGFunction + Into<FuncId>,
         S: CGCallSite + Into<BaseCallSite>,
