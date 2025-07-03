@@ -44,3 +44,7 @@ pub use pta::result::{CallGraph, Path};
 pub use mir::analysis_context::AnalysisContext;
 pub use util::options::AnalysisOptions;
 pub use mir::function::FuncId;
+// The output we need from the analysis is a CallGraph.
+// Node is DefId of functions.
+// Edge is a BasicBlock, whose Terminator calls the callee.
+// TODO: are there promoted functions that have dataflow edges?
